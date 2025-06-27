@@ -14,7 +14,9 @@ class AlgorithmesPriorite:
         self.est = self.data.get('est', [0]*self.data['nActs'])
         self.lst = self.data.get('lst', [0]*self.data['nActs'])
         self.lft = self.data.get('lft', [0]*self.data['nActs'])
-        self.float_dyn = self.data.get('float_dyn', [float('inf')]*self.data['nActs'])
+        self.float_dyn = self.data.get(
+            'float_dyn', [float('inf')] * self.data['nActs']
+        )
         self.resource_usage = self.data.get('resource_usage', {})
 
         self.hrpw_memo = {}
@@ -24,7 +26,10 @@ class AlgorithmesPriorite:
     def compute_successors(self):
         for t in self.activities:
             if t not in self.precedence_graph:
-                self.precedence_graph[t] = {'successors': [], 'predecessors': []}
+                self.precedence_graph[t] = {
+                    'successors': [],
+                    'predecessors': []
+                }
 
     def compute_hrpw(self, task):
         if task in self.hrpw_memo:
@@ -33,7 +38,10 @@ class AlgorithmesPriorite:
         if not succ:
             val = self.durations[task-1]
         else:
-            val = self.durations[task-1] + max(self.compute_hrpw(s) for s in succ)
+            val = (
+                self.durations[task-1]
+                + max(self.compute_hrpw(s) for s in succ)
+            )
         self.hrpw_memo[task] = val
         return val
 
@@ -42,7 +50,10 @@ class AlgorithmesPriorite:
             self.compute_hrpw(t)
 
     def sort_by_hrpw(self):
-        return sorted(self.activities, key=lambda t: self.hrpw_memo[t], reverse=True)
+        return sorted(
+            self.activities,
+            key=lambda t: self.hrpw_memo[t], reverse=True
+        )
 
     def sort_by_lst(self):
         return sorted(self.activities, key=lambda t: self.lst[t-1])
@@ -70,7 +81,11 @@ class AlgorithmesPriorite:
 
     def sort_by_hru1(self):
         usage = self.resource_usage
-        return sorted(self.activities, key=lambda t: usage.get(t, 0), reverse=True)
+        return sorted(
+            self.activities,
+            key=lambda t: usage.get(t, 0),
+            reverse=True
+        )
 
     def sort_by_timres(self):
         scores = {}
@@ -82,10 +97,17 @@ class AlgorithmesPriorite:
 
     def sort_by_hru2(self):
         usage = self.resource_usage
-        return sorted(self.activities, key=lambda t: usage.get(t,0)*self.durations[t-1], reverse=True)
+        return sorted(
+            self.activities,
+            key=lambda t: usage.get(t, 0)*self.durations[t-1],
+            reverse=True
+        )
 
     def sort_by_stfd(self):
-        return sorted(self.activities, key=lambda t: self.float_dyn[t-1])
+        return sorted(
+            self.activities,
+            key=lambda t: self.float_dyn[t-1]
+        )
 
     def sort_by_eft(self):
         eft = {t: self.est[t-1] + self.durations[t-1] for t in self.activities}
@@ -104,15 +126,20 @@ class AlgorithmesPriorite:
             remaining = set(ordered_activities)
             result = []
             while remaining:
-                ready = [a for a in remaining if all(pred not in remaining for pred in G.predecessors(a))]
+                ready = [a for a in remaining if all(
+                    pred not in remaining for pred in G.predecessors(a))]
                 if not ready:
                     break
-                next_act = min(ready, key=lambda a: priority.get(a, float('inf')))
+                next_act = min(
+                    ready, key=lambda a: priority.get(a, float('inf')))
                 result.append(next_act)
                 remaining.remove(next_act)
             return result + list(remaining)
         except nx.NetworkXUnfeasible:
-            print("Cycle détecté dans le graphe, impossible de respecter précédence")
+            print(
+                "Cycle détecté dans le graphe, "
+                "impossible de respecter précédence"
+            )
             return ordered_activities
 
     def get_ordered_activities(self, rule_abbr):
@@ -229,7 +256,12 @@ if __name__ == "__main__":
 
         instance_name = os.path.splitext(os.path.basename(dzn_file))[0]
 
-        for rule in ['HRPW*', 'LST', 'LFT', 'MTS', 'TIMROS', 'HRU1', 'TIMRES', 'HRU2', 'STFD', 'EFT']:
+        for rule in [
+            'HRPW*', 'LST', 'LFT',
+            'MTS', 'TIMROS', 'HRU1',
+            'TIMRES', 'HRU2', 'STFD',
+            'EFT'
+        ]:
             ordre = algos.get_ordered_activities(rule)
 
             # Création dossier résultat
@@ -246,4 +278,3 @@ if __name__ == "__main__":
                 }, f, indent=2)
 
             print(f"Résultat {rule} sauvegardé dans {filepath_res}")
-
