@@ -274,7 +274,8 @@ if __name__ == "__main__":
                 json.dump({
                     "instance": instance_name,
                     "rule": rule,
-                    "ordered_activities": ordre
+                    "ordered_activities": ordre,
+                    "durations": instance_data["dur"]
                 }, f, indent=2)
 
             print(f"Résultat {rule} sauvegardé dans {filepath_res}")
