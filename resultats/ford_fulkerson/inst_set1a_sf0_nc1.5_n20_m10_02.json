@@ -1,0 +1,159 @@
+{
+  "instance": "inst_set1a_sf0_nc1.5_n20_m10_02",
+  "best_algorithm": "EFT",
+  "best_max_flow": 22,
+  "best_efficiency": 1.0,
+  "algorithms_results": {
+    "EFT": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "HRPW*": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "HRU1": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "HRU2": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "LFT": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "LST": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "MTS": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "STFD": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "TIMRES": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    },
+    "TIMROS": {
+      "max_flow": 22,
+      "max_flows_details": {
+        "precedence": 22,
+        "resource": 22,
+        "direct": 22
+      },
+      "metrics": {
+        "total_duration": 132,
+        "valid_activities": 22,
+        "invalid_activities": 0,
+        "resource_utilization": 0.16666666666666666,
+        "schedule_efficiency": 1.0
+      }
+    }
+  },
+  "durations_count": 31
+}
