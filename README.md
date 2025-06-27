@@ -47,7 +47,6 @@ Cela :
 - mesure des métriques (efficacité, durée totale, validité),
 - exporte les résultats dans un CSV.
 
-## 🧠 Heuristiques implémentées
 
 ## 🏆 Top 5 des règles selon les performances (résultats expérimentaux)
 
@@ -73,7 +72,8 @@ Cela :
 
 
 
-🏆 Top 10 des règles de priorité (ordonnées par performance globale)
+
+## 🏆 Top 10 des règles de priorité (ordonnées par performance globale)
 
 
 |  Rang | Nom de la règle                      | Abréviation | Description simplifiée                                                          |
