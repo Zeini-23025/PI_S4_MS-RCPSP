@@ -28,6 +28,7 @@ class MSRCPSPScheduler:
         
         # Capacités des ressources
         self.resource_capacity = self.data.get('capacity', [1] * self.n_resources)
+        self.resource_availability = [0] * max(1, self.n_resources)
         
     def calculate_makespan(self, activity_order: List[int]) -> Tuple[int, Dict[int, Tuple[int, int]]]:
         """
@@ -35,7 +36,7 @@ class MSRCPSPScheduler:
         Retourne (makespan, schedule) où schedule[activity] = (start_time, end_time)
         """
         schedule = {}  # activity -> (start_time, end_time)
-        resource_availability = [0] * self.n_resources  # Temps de libération de chaque ressource
+        resource_availability = [0] * max(1, self.n_resources)  # Temps de libération de chaque ressource
         
         for activity in activity_order:
             activity_idx = activity - 1
@@ -60,13 +61,14 @@ class MSRCPSPScheduler:
             else:
                 # Trouver le moment où toutes les ressources nécessaires sont disponibles
                 start_time = self._find_earliest_resource_availability(
-                    required_resources, earliest_start, duration
+                    required_resources, earliest_start, duration, resource_availability
                 )
                 end_time = start_time + duration
                 
                 # Mettre à jour la disponibilité des ressources
                 for resource_idx in required_resources:
-                    resource_availability[resource_idx] = end_time
+                    if resource_idx < len(resource_availability):
+                        resource_availability[resource_idx] = end_time
             
             schedule[activity] = (start_time, end_time)
         
@@ -108,38 +110,25 @@ class MSRCPSPScheduler:
         # Retourner la première ressource capable (stratégie simple)
         return capable_resources[:1] if capable_resources else [0]
     
-    def _find_earliest_resource_availability(self, required_resources: List[int], 
-                                           earliest_start: int, duration: int) -> int:
+    def _find_earliest_resource_availability(
+            self, required_resources: List[int],
+            earliest_start: int, duration: int,
+            resource_availability: List[int]) -> int:
         """
-        Trouve le moment le plus tôt où toutes les ressources requises sont disponibles
+        Trouve le moment le plus tôt où toutes les ressources requises
+        sont disponibles
         """
         if not required_resources:
             return earliest_start
         
         # Pour simplifier, on prend le maximum des temps de libération
         max_resource_availability = max(
-            self.resource_availability.get(res_idx, 0) 
+            (resource_availability[res_idx]
+             if res_idx < len(resource_availability) else 0)
             for res_idx in required_resources
         )
         
         return max(earliest_start, max_resource_availability)
-    
-    def __init__(self, instance_data: Dict[str, Any]):
-        self.data = instance_data
-        self.n_activities = self.data.get('nActs', 0)
-        self.n_resources = self.data.get('nRes', 0)
-        self.n_skills = self.data.get('nSkills', 0)
-        
-        self.durations = self.data.get('dur', [1] * self.n_activities)
-        self.precedence_graph = self.data.get('precedence_graph', {})
-        
-        # Données de compétences
-        self.skill_requirements = self.data.get('sreq', [])
-        self.resource_mastery = self.data.get('mastery', [])
-        
-        # Capacités des ressources
-        self.resource_capacity = self.data.get('capacity', [1] * self.n_resources)
-        self.resource_availability = [0] * max(1, self.n_resources)
 
 
 class MakespanCalculator:

@@ -113,6 +113,10 @@ class MSRCPSPPriorityAlgorithms:
     
     def _compute_resource_metrics(self):
         """Calcule les métriques liées aux ressources"""
+        # S'assurer que resource_usage est un dictionnaire
+        if not isinstance(self.resource_usage, dict):
+            self.resource_usage = {}
+        
         # Si pas de données de ressources, utiliser des valeurs par défaut
         if not self.resource_usage:
             for task in self.activities:
@@ -190,7 +194,8 @@ class MSRCPSPPriorityAlgorithms:
         for task in self.activities:
             duration = self.durations[task - 1]
             availability = self._get_resource_availability(task)
-            ratios[task] = duration / availability if availability > 0 else float('inf')
+            ratios[task] = (duration / availability
+                            if availability > 0 else float('inf'))
         
         return sorted(self.activities, key=lambda t: ratios[t], reverse=True)
     
@@ -234,7 +239,9 @@ class MSRCPSPPriorityAlgorithms:
             key=lambda t: self.eft[t - 1]
         )
     
-    def _respect_precedence_constraints(self, ordered_activities: List[int]) -> List[int]:
+    def _respect_precedence_constraints(self,
+                                        ordered_activities: List[int]
+                                        ) -> List[int]:
         """
         Réordonne les activités pour respecter les contraintes de précédence
         en utilisant un tri topologique pondéré
@@ -273,7 +280,8 @@ class MSRCPSPPriorityAlgorithms:
                 break
             
             # Choisir la tâche avec la meilleure priorité
-            next_task = min(ready_tasks, key=lambda t: priority_map.get(t, float('inf')))
+            next_task = min(ready_tasks,
+                            key=lambda t: priority_map.get(t, float('inf')))
             result.append(next_task)
             remaining.remove(next_task)
         
@@ -298,7 +306,10 @@ class MSRCPSPPriorityAlgorithms:
         
         if rule_name not in rule_mapping:
             available_rules = ', '.join(rule_mapping.keys())
-            raise ValueError(f"Règle inconnue: {rule_name}. Règles disponibles: {available_rules}")
+            raise ValueError(
+                f"Règle inconnue: {rule_name}. "
+                f"Règles disponibles: {available_rules}"
+            )
         
         # Appliquer la règle de tri
         ordered_activities = rule_mapping[rule_name]()
@@ -308,7 +319,8 @@ class MSRCPSPPriorityAlgorithms:
     
     def get_all_priority_orders(self) -> Dict[str, List[int]]:
         """Retourne tous les ordres de priorité pour toutes les règles"""
-        all_rules = ['HRPW*', 'LST', 'LFT', 'MTS', 'TIMROS', 'HRU1', 'TIMRES', 'HRU2', 'STFD', 'EFT']
+        all_rules = ['HRPW*', 'LST', 'LFT', 'MTS', 'TIMROS',
+                     'HRU1', 'TIMRES', 'HRU2', 'STFD', 'EFT']
         results = {}
         
         for rule in all_rules:
@@ -337,7 +349,8 @@ def parse_dzn_file(filepath: str) -> Dict[str, Any]:
     simple_patterns = [
         (r'(\w+)\s*=\s*(\d+);', lambda x: int(x)),
         (r'(\w+)\s*=\s*(true|false);', lambda x: x.lower() == 'true'),
-        (r'(\w+)\s*=\s*\[([^\]]+)\];', lambda x: [int(i) for i in re.findall(r'-?\d+', x)])
+        (r'(\w+)\s*=\s*\[([^\]]+)\];',
+         lambda x: [int(i) for i in re.findall(r'-?\d+', x)])
     ]
     
     for pattern, converter in simple_patterns:
@@ -361,7 +374,8 @@ def parse_dzn_file(filepath: str) -> Dict[str, Any]:
             
             # Extraire les valeurs (nombres, true, false)
             values = []
-            tokens = re.findall(r'\b(?:\d+|true|false)\b', row_content, re.IGNORECASE)
+            tokens = re.findall(r'\b(?:\d+|true|false)\b',
+                                row_content, re.IGNORECASE)
             
             for token in tokens:
                 if token.lower() == 'true':
