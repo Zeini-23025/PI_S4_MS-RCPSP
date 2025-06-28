@@ -13,7 +13,20 @@ Ce projet implémente différentes heuristiques d'ordonnancement de tâches à p
 ├── ford_fulkerson.py        # Analyse par flot maximum et export CSV
 ├── README.md              # Documentation principale
 ```
-
+```
+projet/
+├── instances/              # Fichiers .dzn d'instances
+├── resultats/              # Résultats des algorithmes
+│   ├── HRPW*/             # Résultats HRPW*
+│   ├── LST/               # Résultats LST
+│   ├── ...                # Autres algorithmes
+│   ├── makespan_comparison.csv
+│   ├── summary_statistics.csv
+│   └── makespan_details/  # Détails par instance
+├── paste.py               # Votre code des algorithmes
+├── makespan_calculator.py # Calculateur de makespan
+└── run_analysis.py        # Script principal
+```
 ## ⚙️ Installation
 
 ### Dépendances

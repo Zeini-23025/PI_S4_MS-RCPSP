@@ -1,0 +1,65 @@
+{
+  "instance": "inst_set1a_sf1_nc2.1_n20_m30_00",
+  "results": {
+    "HRPW*": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "LST": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "LFT": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "MTS": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "TIMROS": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "HRU1": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "TIMRES": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "HRU2": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "STFD": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    },
+    "EFT": {
+      "makespan": Infinity,
+      "execution_time": 0,
+      "schedule": {},
+      "activity_order": []
+    }
+  }
+}
