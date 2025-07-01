@@ -2,7 +2,7 @@
   "instance": "inst_set1a_sf0_nc2.1_n20_m10_05",
   "rule": "LST",
   "n_activities": 22,
-  "n_resources": 0,
+  "n_resources": 10,
   "n_skills": 4,
   "ordered_activities": [
     1,
