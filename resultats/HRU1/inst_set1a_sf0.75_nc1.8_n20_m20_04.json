@@ -2,7 +2,7 @@
   "instance": "inst_set1a_sf0.75_nc1.8_n20_m20_04",
   "rule": "HRU1",
   "n_activities": 22,
-  "n_resources": 0,
+  "n_resources": 20,
   "n_skills": 4,
   "ordered_activities": [
     1,

@@ -410,6 +410,10 @@ def parse_dzn_file(filepath: str) -> Dict[str, Any]:
     
     data['precedence_graph'] = precedence_graph
     
+    # Rename nResources to nRes for consistency with other parts of the code
+    if 'nResources' in data:
+        data['nRes'] = data.pop('nResources')
+
     return data
 
 
@@ -475,6 +479,127 @@ def compute_temporal_metrics(data: Dict[str, Any]) -> Dict[str, Any]:
     data['float_dyn'] = float_dyn
     
     return data
+
+
+def build_resource_allocation_flow_network(instance_data: Dict[str, Any]) -> Tuple[Dict[int, Dict[int, int]], int, int]:
+    """
+    Construit un réseau de flot pour vérifier la faisabilité d'allocation de ressources
+    basée sur les compétences.
+
+    Args:
+        instance_data: Les données de l'instance MS-RCPSP.
+
+    Returns:
+        Un tuple (graph, source, sink) représentant le réseau de flot.
+    """
+    n_activities = instance_data.get('nActs', 0)
+    n_resources = instance_data.get('nRes', 0)
+    skill_requirements = instance_data.get('sreq', [])
+    resource_mastery = instance_data.get('mastery', [])
+
+    graph = defaultdict(lambda: defaultdict(int))
+
+    source = 0
+    sink = n_activities + n_resources + 1
+
+    # 1. Edges from Source to Activity Nodes
+    # Each activity needs to be assigned, capacity 1
+    for i in range(1, n_activities + 1):
+        graph[source][i] = 1
+
+    # 2. Edges from Activity Nodes to Resource Nodes (based on skills)
+    # Activity nodes are 1 to n_activities
+    # Resource nodes are n_activities + 1 to n_activities + n_resources
+    for activity_idx in range(n_activities):
+        activity_node = activity_idx + 1
+        required_skills = skill_requirements[activity_idx] if activity_idx < len(skill_requirements) else []
+
+        for resource_idx in range(n_resources):
+            resource_node = n_activities + resource_idx + 1
+            masteries = resource_mastery[resource_idx] if resource_idx < len(resource_mastery) else []
+
+            # Check if resource has all required skills for the activity
+            can_perform = True
+            for skill_id, required in enumerate(required_skills):
+                if required and (skill_id >= len(masteries) or not masteries[skill_id]):
+                    can_perform = False
+                    break
+            
+            if can_perform:
+                # Edge from activity to resource if resource can perform activity
+                graph[activity_node][resource_node] = 1 # Capacity 1: one activity per resource at a time
+
+    # 3. Edges from Resource Nodes to Sink (resource capacity)
+    # Assuming each resource can handle one assignment for this feasibility check
+    for resource_idx in range(n_resources):
+        resource_node = n_activities + resource_idx + 1
+        graph[resource_node][sink] = 1 # Capacity 1: each resource can be used once
+
+    return dict(graph), source, sink
+
+
+def calculate_max_flow(graph: Dict[int, Dict[int, int]], source: int, sink: int) -> int:
+    """
+    Calcule le flot maximal d'un graphe en utilisant l'algorithme d'Edmonds-Karp.
+    Le graphe est représenté par un dictionnaire d'adjacence où:
+    graph[u][v] = capacité de l'arête (u, v)
+
+    Args:
+        graph: Le graphe capacitaire.
+        source: Le nœud source.
+        sink: Le nœud puits.
+
+    Returns:
+        Le flot maximal de la source au puits.
+    """
+    # Créer le graphe résiduel (copie du graphe original)
+    residual_graph = {u: {v: cap for v, cap in edges.items()} for u, edges in graph.items()}
+    for u in graph:
+        for v in graph[u]:
+            if v not in residual_graph:
+                residual_graph[v] = {}
+            if u not in residual_graph[v]:
+                residual_graph[v][u] = 0 # Ajouter les arêtes inverses avec capacité 0 initialement
+
+    max_flow = 0
+
+    while True:
+        # Trouver un chemin augmentant en utilisant BFS
+        parent = {}  # parent[v] = u signifie que u est le prédécesseur de v dans le chemin
+        queue = deque([(source, float('inf'))]) # (node, current_path_flow)
+        
+        # Pour garder une trace des nœuds visités dans ce BFS
+        visited = {source} 
+        
+        path_flow = 0
+
+        while queue:
+            u, current_flow = queue.popleft()
+
+            if u == sink:
+                path_flow = current_flow
+                break
+
+            for v, capacity in residual_graph.get(u, {}).items():
+                if v not in visited and capacity > 0:
+                    visited.add(v)
+                    parent[v] = u
+                    queue.append((v, min(current_flow, capacity)))
+        
+        if path_flow == 0:
+            break # Pas de chemin augmentant trouvé
+
+        max_flow += path_flow
+
+        # Mettre à jour les capacités résiduelles
+        v = sink
+        while v != source:
+            u = parent[v]
+            residual_graph[u][v] -= path_flow
+            residual_graph[v][u] += path_flow # Mettre à jour l'arête inverse
+            v = u
+            
+    return max_flow
 
 
 def main():

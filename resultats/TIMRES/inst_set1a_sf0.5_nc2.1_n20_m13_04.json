@@ -2,7 +2,7 @@
   "instance": "inst_set1a_sf0.5_nc2.1_n20_m13_04",
   "rule": "TIMRES",
   "n_activities": 22,
-  "n_resources": 0,
+  "n_resources": 13,
   "n_skills": 4,
   "ordered_activities": [
     1,

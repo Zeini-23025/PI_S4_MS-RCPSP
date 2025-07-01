@@ -2,7 +2,7 @@
   "instance": "inst_set1a_sf0.75_nc1.8_n20_m25_04",
   "rule": "EFT",
   "n_activities": 22,
-  "n_resources": 0,
+  "n_resources": 25,
   "n_skills": 4,
   "ordered_activities": [
     1,
