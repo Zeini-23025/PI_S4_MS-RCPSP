@@ -418,6 +418,23 @@ class MakespanCalculator:
         print(f"\nFichiers générés:")
         print(f"  - Comparaison détaillée: {comparison_file}")
         print(f"  - Statistiques résumées: {summary_file}")
+
+        # Déterminer et afficher le best algorithme global
+        try:
+            df_stats = pd.read_csv(summary_file)
+            if not df_stats.empty and 'Avg_Makespan' in df_stats.columns:
+                best_overall_algo_row = df_stats.loc[df_stats['Avg_Makespan'].idxmin()]
+                print("\n" + "=" * 60)
+                print("MEILLEUR ALGORITHME GLOBAL (basé sur le Makespan Moyen)")
+                print("=" * 60)
+                print(f"Algorithme: {best_overall_algo_row['Algorithm']}")
+                print(f"Makespan Moyen: {best_overall_algo_row['Avg_Makespan']:.2f}")
+                print(f"Nombre de Victoires: {int(best_overall_algo_row['Wins'])}")
+                print(f"Taux de Succès: {best_overall_algo_row['Success_Rate']:.2f}%")
+            else:
+                print("\nImpossible de déterminer le best algorithme global (données statistiques manquantes ou vides).")
+        except Exception as e:
+            print(f"\nErreur lors de la détermination du best algorithme global: {e}")
         print(f"  - Résultats détaillés: {os.path.join(self.results_dir, 'makespan_details')}")
 
 

@@ -3,7 +3,7 @@
   "results": {
     "HRPW*": {
       "makespan": 109,
-      "execution_time": 0.0004391670227050781,
+      "execution_time": 0.00034546852111816406,
       "schedule": {
         "1": [
           0,
@@ -121,7 +121,7 @@
     },
     "LST": {
       "makespan": 109,
-      "execution_time": 0.0003676414489746094,
+      "execution_time": 0.0002999305725097656,
       "schedule": {
         "1": [
           0,
@@ -239,7 +239,7 @@
     },
     "LFT": {
       "makespan": 109,
-      "execution_time": 0.0003902912139892578,
+      "execution_time": 0.0003476142883300781,
       "schedule": {
         "1": [
           0,
@@ -357,7 +357,7 @@
     },
     "MTS": {
       "makespan": 109,
-      "execution_time": 0.0003762245178222656,
+      "execution_time": 0.0004215240478515625,
       "schedule": {
         "1": [
           0,
@@ -475,7 +475,7 @@
     },
     "TIMROS": {
       "makespan": 109,
-      "execution_time": 0.00037288665771484375,
+      "execution_time": 0.00038242340087890625,
       "schedule": {
         "1": [
           0,
@@ -711,7 +711,7 @@
     },
     "TIMRES": {
       "makespan": 109,
-      "execution_time": 0.0003762245178222656,
+      "execution_time": 0.0003082752227783203,
       "schedule": {
         "1": [
           0,
@@ -829,7 +829,7 @@
     },
     "HRU2": {
       "makespan": 109,
-      "execution_time": 0.00036334991455078125,
+      "execution_time": 0.00032210350036621094,
       "schedule": {
         "1": [
           0,
@@ -947,7 +947,7 @@
     },
     "STFD": {
       "makespan": 109,
-      "execution_time": 0.0004036426544189453,
+      "execution_time": 0.00030732154846191406,
       "schedule": {
         "1": [
           0,
@@ -1065,7 +1065,7 @@
     },
     "EFT": {
       "makespan": 109,
-      "execution_time": 0.00044274330139160156,
+      "execution_time": 0.0003032684326171875,
       "schedule": {
         "1": [
           0,
