@@ -3,7 +3,7 @@
   "results": {
     "HRPW*": {
       "makespan": 72,
-      "execution_time": 0.0001571178436279297,
+      "execution_time": 0.00014901161193847656,
       "schedule": {
         "1": [
           0,
@@ -121,7 +121,7 @@
     },
     "LST": {
       "makespan": 72,
-      "execution_time": 0.0001468658447265625,
+      "execution_time": 0.00016880035400390625,
       "schedule": {
         "1": [
           0,
@@ -239,7 +239,7 @@
     },
     "LFT": {
       "makespan": 71,
-      "execution_time": 0.0001468658447265625,
+      "execution_time": 0.0001437664031982422,
       "schedule": {
         "1": [
           0,
@@ -357,7 +357,7 @@
     },
     "MTS": {
       "makespan": 71,
-      "execution_time": 0.0001430511474609375,
+      "execution_time": 0.00023555755615234375,
       "schedule": {
         "1": [
           0,
@@ -475,7 +475,7 @@
     },
     "TIMROS": {
       "makespan": 87,
-      "execution_time": 0.000148773193359375,
+      "execution_time": 0.00014591217041015625,
       "schedule": {
         "1": [
           0,
@@ -593,7 +593,7 @@
     },
     "HRU1": {
       "makespan": 82,
-      "execution_time": 0.00014448165893554688,
+      "execution_time": 0.0001366138458251953,
       "schedule": {
         "1": [
           0,
@@ -711,7 +711,7 @@
     },
     "TIMRES": {
       "makespan": 87,
-      "execution_time": 0.0001537799835205078,
+      "execution_time": 0.00014138221740722656,
       "schedule": {
         "1": [
           0,
@@ -829,7 +829,7 @@
     },
     "HRU2": {
       "makespan": 87,
-      "execution_time": 0.00014710426330566406,
+      "execution_time": 0.00016808509826660156,
       "schedule": {
         "1": [
           0,
@@ -947,7 +947,7 @@
     },
     "STFD": {
       "makespan": 76,
-      "execution_time": 0.0001480579376220703,
+      "execution_time": 0.00015163421630859375,
       "schedule": {
         "1": [
           0,
@@ -1065,7 +1065,7 @@
     },
     "EFT": {
       "makespan": 72,
-      "execution_time": 0.00014352798461914062,
+      "execution_time": 0.00014734268188476562,
       "schedule": {
         "1": [
           0,

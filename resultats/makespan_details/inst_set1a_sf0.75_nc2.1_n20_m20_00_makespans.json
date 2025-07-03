@@ -3,7 +3,7 @@
   "results": {
     "HRPW*": {
       "makespan": 58,
-      "execution_time": 0.00027370452880859375,
+      "execution_time": 0.000457763671875,
       "schedule": {
         "1": [
           0,
@@ -121,7 +121,7 @@
     },
     "LST": {
       "makespan": 58,
-      "execution_time": 0.0002918243408203125,
+      "execution_time": 0.00030517578125,
       "schedule": {
         "1": [
           0,
@@ -239,7 +239,7 @@
     },
     "LFT": {
       "makespan": 63,
-      "execution_time": 0.00027251243591308594,
+      "execution_time": 0.00031876564025878906,
       "schedule": {
         "1": [
           0,
@@ -357,7 +357,7 @@
     },
     "MTS": {
       "makespan": 56,
-      "execution_time": 0.0003170967102050781,
+      "execution_time": 0.0002987384796142578,
       "schedule": {
         "1": [
           0,
@@ -475,7 +475,7 @@
     },
     "TIMROS": {
       "makespan": 60,
-      "execution_time": 0.0004265308380126953,
+      "execution_time": 0.0002942085266113281,
       "schedule": {
         "1": [
           0,
@@ -593,7 +593,7 @@
     },
     "HRU1": {
       "makespan": 53,
-      "execution_time": 0.0003535747528076172,
+      "execution_time": 0.00030517578125,
       "schedule": {
         "1": [
           0,
@@ -711,7 +711,7 @@
     },
     "TIMRES": {
       "makespan": 68,
-      "execution_time": 0.000274658203125,
+      "execution_time": 0.00029969215393066406,
       "schedule": {
         "1": [
           0,
@@ -829,7 +829,7 @@
     },
     "HRU2": {
       "makespan": 68,
-      "execution_time": 0.00032639503479003906,
+      "execution_time": 0.0003006458282470703,
       "schedule": {
         "1": [
           0,
@@ -947,7 +947,7 @@
     },
     "STFD": {
       "makespan": 72,
-      "execution_time": 0.0003139972686767578,
+      "execution_time": 0.0005300045013427734,
       "schedule": {
         "1": [
           0,
@@ -1065,7 +1065,7 @@
     },
     "EFT": {
       "makespan": 54,
-      "execution_time": 0.0002605915069580078,
+      "execution_time": 0.00034737586975097656,
       "schedule": {
         "1": [
           0,

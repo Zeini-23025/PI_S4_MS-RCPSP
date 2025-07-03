@@ -3,7 +3,7 @@
   "results": {
     "HRPW*": {
       "makespan": 59,
-      "execution_time": 0.000286102294921875,
+      "execution_time": 0.0003578662872314453,
       "schedule": {
         "1": [
           0,
@@ -121,7 +121,7 @@
     },
     "LST": {
       "makespan": 59,
-      "execution_time": 0.00025177001953125,
+      "execution_time": 0.0004048347473144531,
       "schedule": {
         "1": [
           0,
@@ -239,7 +239,7 @@
     },
     "LFT": {
       "makespan": 54,
-      "execution_time": 0.0002720355987548828,
+      "execution_time": 0.0003390312194824219,
       "schedule": {
         "1": [
           0,
@@ -357,7 +357,7 @@
     },
     "MTS": {
       "makespan": 52,
-      "execution_time": 0.0002532005310058594,
+      "execution_time": 0.0003612041473388672,
       "schedule": {
         "1": [
           0,
@@ -475,7 +475,7 @@
     },
     "TIMROS": {
       "makespan": 70,
-      "execution_time": 0.00024580955505371094,
+      "execution_time": 0.0003497600555419922,
       "schedule": {
         "1": [
           0,
@@ -593,7 +593,7 @@
     },
     "HRU1": {
       "makespan": 73,
-      "execution_time": 0.0002639293670654297,
+      "execution_time": 0.0003516674041748047,
       "schedule": {
         "1": [
           0,
@@ -711,7 +711,7 @@
     },
     "TIMRES": {
       "makespan": 70,
-      "execution_time": 0.0002498626708984375,
+      "execution_time": 0.0003142356872558594,
       "schedule": {
         "1": [
           0,
@@ -829,7 +829,7 @@
     },
     "HRU2": {
       "makespan": 70,
-      "execution_time": 0.00025773048400878906,
+      "execution_time": 0.00031757354736328125,
       "schedule": {
         "1": [
           0,
@@ -947,7 +947,7 @@
     },
     "STFD": {
       "makespan": 59,
-      "execution_time": 0.00025177001953125,
+      "execution_time": 0.0003261566162109375,
       "schedule": {
         "1": [
           0,
@@ -1065,7 +1065,7 @@
     },
     "EFT": {
       "makespan": 61,
-      "execution_time": 0.00025177001953125,
+      "execution_time": 0.000339508056640625,
       "schedule": {
         "1": [
           0,
