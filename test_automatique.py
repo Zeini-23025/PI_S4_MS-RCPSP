@@ -330,7 +330,7 @@ class TestRunner:
             self.log("🎉 TOUS LES TESTS SONT PASSÉS!", "SUCCESS")
         else:
             self.log(f"⚠️  {total - passed} test(s) en échec", "WARNING")
-        
+    
         return {
             "passed": passed,
             "total": total,
