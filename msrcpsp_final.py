@@ -184,128 +184,193 @@ class MSRCPSPScheduler:
             activity.latest_start = activity.latest_finish - activity.duration
             activity.slack = activity.latest_start - activity.earliest_start
     
-    def can_schedule_activity(self, activity: Activity, start_time: int, 
-                            resource_schedule: Dict[int, List[Tuple[int, int]]]) -> Tuple[bool, List[int]]:
+    def find_available_resources_with_relaxation(self, activity: Activity, start_time: int, 
+                                               resource_schedule: Dict[int, List[Tuple[int, int]]], 
+                                               relaxation_level: int = 0) -> Tuple[bool, List[int]]:
+        """
+        Trouver les ressources disponibles avec relaxation progressive
+        relaxation_level: 0=strict, 1=niveau-1, 2=ignorer niveaux, 3=multi-usage
+        """
         end_time = start_time + activity.duration
         
-        # Activités dummy (durée 0 ou sans exigences)
+        # Activités dummy
         if activity.duration == 0 or sum(activity.skill_requirements) == 0:
             return True, []
         
-        # Pour chaque compétence requise, trouver des ressources
+        # Collecter toutes les ressources disponibles temporellement
+        available_resources = []
+        for resource in self.instance.resources:
+            is_available = True
+            for scheduled_start, scheduled_end in resource_schedule.get(resource.id, []):
+                if not (end_time <= scheduled_start or start_time >= scheduled_end):
+                    is_available = False
+                    break
+            
+            if is_available:
+                available_resources.append(resource)
+        
+        # Assignation des ressources avec relaxation
         assigned_resources = []
         
         for skill_idx, required_count in enumerate(activity.skill_requirements):
             if required_count == 0:
                 continue
             
-            # Trouver les ressources disponibles pour cette compétence
-            available_for_skill = []
+            suitable_resources = []
             
-            for resource in self.instance.resources:
-                # Vérifier que la ressource a cette compétence
-                if skill_idx >= len(resource.skills) or resource.skills[skill_idx] == 0:
+            for resource in available_resources:
+                if resource.id in assigned_resources:
                     continue
                 
-                # Vérifier le niveau si requis
+                # Vérifier compétence
+                has_skill = (skill_idx < len(resource.skills) and 
+                           resource.skills[skill_idx] > 0)
+                
+                if not has_skill:
+                    continue
+                
+                # Vérifier niveau avec relaxation
+                level_ok = True
                 if (len(activity.skill_level_requirements) > skill_idx and 
-                    len(activity.skill_level_requirements) > 0):
+                    skill_idx < len(resource.skill_levels)):
                     required_level = activity.skill_level_requirements[skill_idx]
-                    if (skill_idx < len(resource.skill_levels) and 
-                        resource.skill_levels[skill_idx] < required_level):
-                        continue
+                    resource_level = resource.skill_levels[skill_idx]
+                    
+                    if relaxation_level == 0:  # Strict
+                        level_ok = resource_level >= required_level
+                    elif relaxation_level == 1:  # Niveau -1
+                        level_ok = resource_level >= max(1, required_level - 1)
+                    elif relaxation_level >= 2:  # Ignorer niveaux
+                        level_ok = True
                 
-                # Vérifier disponibilité temporelle
-                is_available = True
-                for scheduled_start, scheduled_end in resource_schedule.get(resource.id, []):
-                    if not (end_time <= scheduled_start or start_time >= scheduled_end):
-                        is_available = False
-                        break
-                
-                # Vérifier que la ressource n'est pas déjà assignée à cette activité
-                if resource.id not in assigned_resources and is_available:
-                    available_for_skill.append(resource.id)
+                if level_ok:
+                    suitable_resources.append(resource)
             
-            # Vérifier qu'on a assez de ressources pour cette compétence
-            if len(available_for_skill) < required_count:
+            # Gestion multi-usage pour relaxation_level >= 3
+            if (relaxation_level >= 3 and 
+                len(suitable_resources) < required_count):
+                # Permettre qu'une ressource polyvalente compte pour plusieurs compétences
+                for resource in available_resources:
+                    if resource.id in assigned_resources:
+                        continue
+                    
+                    # Compter combien de compétences cette ressource peut satisfaire
+                    skills_covered = 0
+                    for i, req in enumerate(activity.skill_requirements):
+                        if (req > 0 and i < len(resource.skills) and 
+                            resource.skills[i] > 0):
+                            skills_covered += 1
+                    
+                    if skills_covered >= 2:  # Ressource polyvalente
+                        suitable_resources.append(resource)
+                        if len(suitable_resources) >= required_count:
+                            break
+            
+            # Vérifier si on a assez de ressources
+            if len(suitable_resources) < required_count:
                 return False, []
             
-            # Assigner les ressources nécessaires
-            assigned_resources.extend(available_for_skill[:required_count])
+            # Assigner les ressources
+            for i in range(min(required_count, len(suitable_resources))):
+                assigned_resources.append(suitable_resources[i].id)
         
         return True, assigned_resources
-    
-    def schedule_with_priority(self, priority_name: str) -> Tuple[int, List]:
-        current_time = 0
-        completed_activities = set()
-        resource_schedule = defaultdict(list)
-        schedule = []
-        max_iterations = 10000  # Limite pour éviter les boucles infinies
-        iterations = 0
+
+    def schedule_with_priority_improved(self, priority_name: str) -> Tuple[int, List]:
+        """Ordonnancement avec relaxation progressive pour éviter les deadlocks"""
         
-        while len(completed_activities) < len(self.instance.activities) and iterations < max_iterations:
-            iterations += 1
-            scheduled_any = False
+        for relaxation_level in range(4):  # 0=strict, 1=niveau-1, 2=ignorer niveaux, 3=multi-usage
+            current_time = 0
+            completed_activities = set()
+            resource_schedule = defaultdict(list)
+            schedule = []
+            max_iterations = 10000
+            iterations = 0
+            stagnation_count = 0
             
-            # Trouver les activités prêtes
-            ready_activities = []
-            for activity in self.instance.activities:
-                if activity.id in completed_activities:
-                    continue
+            while (len(completed_activities) < len(self.instance.activities) and 
+                   iterations < max_iterations):
+                iterations += 1
+                scheduled_any = False
                 
-                # Vérifier que tous les prédécesseurs sont terminés
-                all_preds_done = all(p in completed_activities for p in activity.predecessors)
-                if all_preds_done and activity.earliest_start <= current_time:
-                    ready_activities.append(activity)
-            
-            # Appliquer la règle de priorité
-            if priority_name == "EST":
-                ready_activities.sort(key=lambda a: a.earliest_start)
-            elif priority_name == "LFT":
-                ready_activities.sort(key=lambda a: a.latest_finish)
-            elif priority_name == "MSLF":
-                ready_activities.sort(key=lambda a: a.slack)
-            elif priority_name == "SPT":
-                ready_activities.sort(key=lambda a: a.duration)
-            elif priority_name == "LPT":
-                # Longest Processing Time - plus long d'abord
-                ready_activities.sort(key=lambda a: -a.duration)
-            elif priority_name == "FCFS":
-                # First Come First Served - ordre d'ID (activité arrivée)
-                ready_activities.sort(key=lambda a: a.id)
-            elif priority_name == "LST":
-                # Latest Start Time - plus tard possible en premier
-                ready_activities.sort(key=lambda a: -a.latest_start)
-            else:
-                # Par défaut, utiliser EST
-                ready_activities.sort(key=lambda a: a.earliest_start)
-            
-            # Essayer d'ordonnancer les activités par ordre de priorité
-            for activity in ready_activities:
-                can_schedule, assigned_resources = self.can_schedule_activity(
-                    activity, current_time, resource_schedule
-                )
+                # Trouver les activités prêtes
+                ready_activities = []
+                for activity in self.instance.activities:
+                    if activity.id in completed_activities:
+                        continue
+                    
+                    all_preds_done = all(p in completed_activities 
+                                       for p in activity.predecessors)
+                    if all_preds_done:
+                        ready_activities.append(activity)
                 
-                if can_schedule:
-                    end_time = current_time + activity.duration
-                    schedule.append((activity.id, current_time, end_time, assigned_resources))
+                # Appliquer la règle de priorité
+                if priority_name == "EST":
+                    ready_activities.sort(key=lambda a: a.earliest_start)
+                elif priority_name == "LFT":
+                    ready_activities.sort(key=lambda a: a.latest_finish)
+                elif priority_name == "MSLF":
+                    ready_activities.sort(key=lambda a: a.slack)
+                elif priority_name == "SPT":
+                    ready_activities.sort(key=lambda a: a.duration)
+                elif priority_name == "LPT":
+                    ready_activities.sort(key=lambda a: -a.duration)
+                elif priority_name == "FCFS":
+                    ready_activities.sort(key=lambda a: a.id)
+                elif priority_name == "LST":
+                    ready_activities.sort(key=lambda a: -a.latest_start)
+                
+                # Essayer d'ordonnancer avec la relaxation courante
+                for activity in ready_activities:
+                    start_time = max(current_time, activity.earliest_start)
                     
-                    # Marquer les ressources comme occupées
-                    for res_id in assigned_resources:
-                        resource_schedule[res_id].append((current_time, end_time))
+                    can_schedule, assigned_resources = self.find_available_resources_with_relaxation(
+                        activity, start_time, resource_schedule, relaxation_level
+                    )
                     
-                    completed_activities.add(activity.id)
-                    scheduled_any = True
-                    break
+                    if can_schedule:
+                        end_time = start_time + activity.duration
+                        schedule.append((activity.id, start_time, end_time, assigned_resources))
+                        
+                        # Marquer les ressources comme occupées
+                        for res_id in assigned_resources:
+                            resource_schedule[res_id].append((start_time, end_time))
+                        
+                        completed_activities.add(activity.id)
+                        scheduled_any = True
+                        stagnation_count = 0
+                        current_time = max(current_time, start_time)
+                        break
+                
+                if not scheduled_any:
+                    # Avancer le temps intelligemment
+                    next_time = current_time + 1
+                    
+                    # Chercher le prochain moment où une ressource se libère
+                    for resource_times in resource_schedule.values():
+                        for _, end_time in resource_times:
+                            if end_time > current_time:
+                                next_time = min(next_time, end_time)
+                    
+                    current_time = next_time
+                    stagnation_count += 1
+                    
+                    # Éviter la stagnation excessive
+                    if stagnation_count > 1000:
+                        break
             
-            if not scheduled_any:
-                current_time += 1
+            # Si toutes les activités sont ordonnancées, retourner le résultat
+            if len(completed_activities) == len(self.instance.activities):
+                makespan = max(end_time for _, _, end_time, _ in schedule) if schedule else 0
+                return makespan, schedule
         
-        if iterations >= max_iterations:
-            print(f"⚠️  Limite d'itérations atteinte pour {priority_name}")
-        
+        # Si échec même avec relaxation maximale, retourner une solution partielle
         makespan = max(end_time for _, _, end_time, _ in schedule) if schedule else 0
         return makespan, schedule
+    
+    def schedule_with_priority(self, priority_name: str) -> Tuple[int, List]:
+        """Version améliorée utilisant la relaxation progressive"""
+        return self.schedule_with_priority_improved(priority_name)
 
 
 def run_algorithms_on_instance(instance_path: str, algorithms: List[str]) -> Dict[str, Dict]:
@@ -434,6 +499,117 @@ def main():
             for i, (alg, makespan) in enumerate(makespans):
                 symbol = "🥇" if i == 0 else "🥈" if i == 1 else "🥉" if i == 2 else "📊"
                 print(f"    {symbol} {alg}: {makespan}")
+
+
+def diagnose_instance_complexity(instance: ProjectInstance) -> Dict[str, any]:
+    """Diagnostic de la complexité d'une instance"""
+    
+    # Statistiques de base
+    stats = {
+        'num_activities': instance.num_activities,
+        'num_resources': instance.num_resources,
+        'num_skills': instance.num_skills,
+        'activity_durations': [a.duration for a in instance.activities],
+        'total_skill_requirements': [],
+        'resource_utilization_potential': 0,
+        'precedence_density': 0,
+        'critical_path_estimate': 0
+    }
+    
+    # Analyser les exigences de compétences
+    for activity in instance.activities:
+        total_req = sum(activity.skill_requirements)
+        stats['total_skill_requirements'].append(total_req)
+    
+    # Calculer la densité des contraintes de précédence
+    total_possible_edges = instance.num_activities * (instance.num_activities - 1)
+    actual_edges = sum(len(a.predecessors) for a in instance.activities)
+    stats['precedence_density'] = actual_edges / total_possible_edges if total_possible_edges > 0 else 0
+    
+    # Estimer le chemin critique
+    max_path = 0
+    for activity in instance.activities:
+        if not activity.successors:  # Activité finale
+            path_length = activity.earliest_finish
+            max_path = max(max_path, path_length)
+    stats['critical_path_estimate'] = max_path
+    
+    # Analyser les goulots d'étranglement de ressources
+    skill_demand = [0] * instance.num_skills
+    for activity in instance.activities:
+        for i, req in enumerate(activity.skill_requirements):
+            if i < len(skill_demand):
+                skill_demand[i] += req
+    
+    skill_supply = [0] * instance.num_skills
+    for resource in instance.resources:
+        for i, skill in enumerate(resource.skills):
+            if i < len(skill_supply) and skill > 0:
+                skill_supply[i] += 1
+    
+    bottlenecks = []
+    for i in range(min(len(skill_demand), len(skill_supply))):
+        if skill_supply[i] > 0:
+            ratio = skill_demand[i] / skill_supply[i]
+            bottlenecks.append(ratio)
+        else:
+            bottlenecks.append(float('inf'))
+    
+    stats['resource_bottlenecks'] = bottlenecks
+    stats['max_bottleneck'] = max(bottlenecks) if bottlenecks else 0
+    
+    return stats
+
+
+def analyze_scheduling_differences(instance: ProjectInstance, algorithms: List[str]) -> Dict[str, any]:
+    """Analyse pourquoi les algorithmes donnent des résultats similaires"""
+    
+    scheduler = MSRCPSPScheduler(instance)
+    results = {}
+    schedules = {}
+    
+    # Tester tous les algorithmes
+    for alg in algorithms:
+        try:
+            makespan, schedule = scheduler.schedule_with_priority(alg)
+            results[alg] = makespan
+            schedules[alg] = schedule
+        except Exception as e:
+            results[alg] = float('inf')
+            schedules[alg] = []
+    
+    # Analyser les différences
+    analysis = {
+        'makespans': results,
+        'unique_makespans': len(set(v for v in results.values() if v != float('inf'))),
+        'best_makespan': min(v for v in results.values() if v != float('inf')) if any(v != float('inf') for v in results.values()) else float('inf'),
+        'worst_makespan': max(v for v in results.values() if v != float('inf')) if any(v != float('inf') for v in results.values()) else float('inf'),
+        'schedule_similarities': {}
+    }
+    
+    # Comparer les ordres d'activités
+    activity_orders = {}
+    for alg, schedule in schedules.items():
+        if schedule:
+            activity_orders[alg] = [activity_id for activity_id, _, _, _ in sorted(schedule, key=lambda x: x[1])]
+    
+    # Calculer la similarité des ordres
+    similarities = {}
+    alg_list = list(activity_orders.keys())
+    for i, alg1 in enumerate(alg_list):
+        for alg2 in alg_list[i+1:]:
+            if alg1 in activity_orders and alg2 in activity_orders:
+                order1 = activity_orders[alg1]
+                order2 = activity_orders[alg2]
+                # Calculer le pourcentage de positions identiques
+                common_positions = sum(1 for j, (a1, a2) in enumerate(zip(order1, order2)) if a1 == a2)
+                similarity = common_positions / max(len(order1), len(order2)) if max(len(order1), len(order2)) > 0 else 0
+                similarities[f"{alg1}_vs_{alg2}"] = similarity
+    
+    analysis['schedule_similarities'] = similarities
+    analysis['activity_orders'] = activity_orders
+    
+    return analysis
 
 
 if __name__ == "__main__":
