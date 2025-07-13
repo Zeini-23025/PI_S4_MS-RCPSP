@@ -43,7 +43,7 @@ def run_full_analysis():
     
     all_results = {}
     comparison_data = []
-    algorithms = ["EST", "LFT", "MSLF", "SPT"]
+    algorithms = ["EST", "LFT", "MSLF", "SPT", "LPT", "FCFS", "LST"]
     
     print("\n🔄 Début du traitement...")
     
@@ -211,7 +211,7 @@ def run_sample_analysis():
     
     all_results = {}
     comparison_data = []
-    algorithms = ["EST", "LFT", "MSLF", "SPT"]
+    algorithms = ["EST", "LFT", "MSLF", "SPT", "LPT", "FCFS", "LST"]
     
     for i, filename in enumerate(sample_files):
         instance_path = os.path.join(instances_dir, filename)

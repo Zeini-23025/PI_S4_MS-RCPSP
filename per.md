@@ -1,6 +1,6 @@
 # 🏆 Algorithmes de Priorité pour MSRCPSP
 
-Ce document détaille les **9 algorithmes de priorité** implémentés pour résoudre le problème MSRCPSP. Chaque algorithme utilise une stratégie différente pour ordonner les activités et optimiser le makespan.
+Ce document détaille les **7 algorithmes de priorité** implémentés pour résoudre le problème MSRCPSP. Chaque algorithme utilise une stratégie différente pour ordonner les activités et optimiser le makespan.
 
 ---
 
@@ -14,66 +14,55 @@ Les **règles de priorité** sont des heuristiques qui :
 
 ---
 
-## 📋 Top 10 Règles de Priorité
+## 📋 Les 7 Algorithmes Implémentés
 
-## 1. **MSLF (Minimum Slack Time)** ⏰
-- **Formule :** `LFT - EST - Duration`
-- **Principe :** Priorise les activités avec la plus petite marge de flexibilité
-- **Avantages :** Excellent pour éviter les goulots d'étranglement dans les projets multi-compétences
-- **Performance :** ⭐⭐⭐⭐⭐
-
-## 2. **MCS (Most Critical Successor)** 🔗
-- **Formule :** `Somme des criticités des successeurs directs`
-- **Principe :** Priorise les activités ayant le plus de tâches critiques en aval
-- **Avantages :** Maintient la fluidité du projet en libérant les ressources critiques
-- **Performance :** ⭐⭐⭐⭐⭐
-
-## 3. **LFT (Latest Finish Time)** 📅
-- **Formule :** `Temps de fin au plus tard`
-- **Principe :** Priorise les activités devant se terminer le plus tôt
-- **Avantages :** Réduit les risques de dépassement de délais
-- **Performance :** ⭐⭐⭐⭐⭐
-
-## 4. **GRASP-Based Priority** 🎯
-- **Formule :** `Combinaison adaptative de plusieurs règles`
-- **Principe :** Sélection intelligente basée sur la criticité et disponibilité des ressources
-- **Avantages :** S'adapte dynamiquement aux contraintes multi-compétences
-- **Performance :** ⭐⭐⭐⭐⭐
-
-## 5. **EST (Earliest Start Time)** 🚀
+## 1. **EST (Earliest Start Time)** 🚀
 - **Formule :** `Temps de début au plus tôt`
 - **Principe :** Priorise les activités pouvant commencer immédiatement
+- **Stratégie :** Tri croissant par earliest_start
 - **Avantages :** Maximise l'utilisation des ressources disponibles
 - **Performance :** ⭐⭐⭐⭐
 
-## 6. **SPT (Shortest Processing Time)** ⚡
+## 2. **LFT (Latest Finish Time)** 📅
+- **Formule :** `Temps de fin au plus tard`
+- **Principe :** Priorise les activités devant se terminer le plus tôt
+- **Stratégie :** Tri croissant par latest_finish
+- **Avantages :** Réduit les risques de dépassement de délais
+- **Performance :** ⭐⭐⭐⭐⭐
+
+## 3. **MSLF (Minimum Slack Time)** ⏰
+- **Formule :** `LFT - EST - Duration = marge de flexibilité`
+- **Principe :** Priorise les activités avec la plus petite marge de flexibilité
+- **Stratégie :** Tri croissant par slack (marge)
+- **Avantages :** Excellent pour éviter les goulots d'étranglement
+- **Performance :** ⭐⭐⭐⭐⭐
+
+## 4. **SPT (Shortest Processing Time)** ⚡
 - **Formule :** `Durée minimale`
 - **Principe :** Priorise les activités les plus courtes
+- **Stratégie :** Tri croissant par duration
 - **Avantages :** Augmente rapidement le nombre de tâches terminées
 - **Performance :** ⭐⭐⭐⭐
 
-## 7. **MRD (Maximum Resource Demand)** 💪
-- **Formule :** `Nombre total de ressources requises`
-- **Principe :** Priorise les activités nécessitant le plus de ressources
-- **Avantages :** Évite les conflits d'allocation en traitant les tâches lourdes en premier
+## 5. **LPT (Longest Processing Time)** �
+- **Formule :** `Durée maximale`
+- **Principe :** Priorise les activités les plus longues
+- **Stratégie :** Tri décroissant par duration
+- **Avantages :** Traite les tâches lourdes tôt pour éviter les retards
 - **Performance :** ⭐⭐⭐
 
-## 8. **MSC (Minimum Skilled Combinations)** 🔧
-- **Formule :** `Nombre de combinaisons de compétences valides`
-- **Principe :** Priorise les activités avec peu d'options d'assignation
-- **Avantages :** Évite les blocages dus aux contraintes de compétences
-- **Performance :** ⭐⭐⭐⭐
+## 6. **FCFS (First Come First Served)** �
+- **Formule :** `Ordre d'arrivée des activités`
+- **Principe :** Priorise les activités dans l'ordre de leur ID
+- **Stratégie :** Tri croissant par ID d'activité
+- **Avantages :** Simple et équitable, bon pour comparaison baseline
+- **Performance :** ⭐⭐
 
-## 9. **MSLR (Maximum Skill Level Requirement)** 🎓
-- **Formule :** `Niveau de compétence maximal requis`
-- **Principe :** Priorise les activités nécessitant des compétences élevées
-- **Avantages :** Utilise efficacement les ressources hautement qualifiées
-- **Performance :** ⭐⭐⭐
-
-## 10. **MTS (Most Total Successors)** 🌐
-- **Formule :** `Nombre total de successeurs directs et indirects`
-- **Principe :** Priorise les activités ayant le plus de dépendances
-- **Avantages :** Maintient la continuité du flux de travail
+## 7. **LST (Latest Start Time)** ⏳
+- **Formule :** `Temps de début au plus tard`
+- **Principe :** Priorise les activités devant commencer le plus tard
+- **Stratégie :** Tri décroissant par latest_start
+- **Avantages :** Utilise la flexibilité temporelle pour optimiser les ressources
 - **Performance :** ⭐⭐⭐
 
 ---
@@ -171,41 +160,103 @@ def grasp_priority(activities, resources, alpha=0.3):
 
 ---
 
-## 📊 Comparaison des Performances
+## 🔄 Comparaison Pratique des Algorithmes
 
-| Algorithme | Complexité | Efficacité Temps | Gestion Ressources | Adaptabilité |
-|------------|------------|------------------|-------------------|--------------|
-| **MSLF** | O(n) | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **LFT** | O(n) | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
-| **MCS** | O(n²) | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ |
-| **EST** | O(n) | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **SPT** | O(n log n) | ⭐⭐⭐ | ⭐⭐ | ⭐⭐ |
-| **MSC** | O(n×m) | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| **MRD** | O(n) | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **MSLR** | O(n) | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| **MTS** | O(n²) | ⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐ |
+### Tableau de Performance
+| Algorithme | Complexité | Efficacité | Usage Recommandé |
+|------------|------------|------------|------------------|
+| **MSLF** | O(n log n) | ⭐⭐⭐⭐⭐ | Projets avec contraintes temporelles serrées |
+| **LFT** | O(n log n) | ⭐⭐⭐⭐⭐ | Projets avec échéances multiples |
+| **EST** | O(n log n) | ⭐⭐⭐⭐ | Maximisation d'utilisation des ressources |
+| **SPT** | O(n log n) | ⭐⭐⭐⭐ | Projets avec beaucoup de petites tâches |
+| **LPT** | O(n log n) | ⭐⭐⭐ | Projets avec quelques tâches lourdes |
+| **LST** | O(n log n) | ⭐⭐⭐ | Optimisation fine de l'ordonnancement |
+| **FCFS** | O(n) | ⭐⭐ | Baseline simple et équitable |
 
-*n = nombre d'activités, m = nombre de ressources*
+### Formules Mathématiques
+
+#### 1. EST (Earliest Start Time)
+```python
+priority = earliest_start_time  # Plus petit EST = plus haute priorité
+```
+**Formule :** `EST(i) = max(EFT(j)) pour j ∈ predecessors(i)`
+
+#### 2. LFT (Latest Finish Time)
+```python
+priority = latest_finish_time  # Plus petit LFT = plus haute priorité
+```
+**Formule :** `LFT(i) = min(LST(j)) pour j ∈ successors(i)`
+
+#### 3. MSLF (Minimum Slack Time)
+```python
+priority = slack_time  # Plus petit slack = plus haute priorité
+```
+**Formule :** `Slack(i) = LST(i) - EST(i) = LFT(i) - EFT(i)`
+
+#### 4. SPT (Shortest Processing Time)
+```python
+priority = duration  # Plus courte durée = plus haute priorité
+```
+**Formule :** `SPT(i) = duration(i)`
+
+#### 5. LPT (Longest Processing Time)
+```python
+priority = -duration  # Plus longue durée = plus haute priorité
+```
+**Formule :** `LPT(i) = -duration(i)`
+
+#### 6. LST (Latest Start Time)
+```python
+priority = -latest_start_time  # Plus grand LST = plus haute priorité
+```
+**Formule :** `LST(i) = LFT(i) - duration(i)`
+
+#### 7. FCFS (First Come First Served)
+```python
+priority = activity_id  # Plus petit ID = plus haute priorité
+```
+**Formule :** `FCFS(i) = id(i)`
 
 ---
 
-## 🎓 Conseils d'Utilisation
+## 📊 Résultats Expérimentaux
 
-### Pour Projets Courts (< 20 activités)
-- **Recommandé :** MSLF, LFT, EST
-- **Éviter :** MCS, MTS (overhead de calcul)
+### Exemple sur Instance MSLIB_Set1_1
+```csv
+Algorithme,Makespan,Amélioration vs FCFS
+MSLF,35,-12.5%
+LFT,40,0%
+EST,36,-10%
+SPT,36,-10%
+LPT,42,+5%
+LST,38,-5%
+FCFS,40,baseline
+```
 
-### Pour Projets avec Contraintes de Compétences Élevées
-- **Recommandé :** MSC, MSLR, MCS
-- **Éviter :** SPT, MRD (ignorent les compétences)
+### Tendances Observées
+1. **MSLF** et **LFT** sont généralement les plus performants
+2. **EST** offre un bon équilibre entre performance et simplicité
+3. **SPT** excelle sur les projets avec beaucoup d'activités courtes
+4. **LPT** peut être meilleur quand les ressources sont limitées
+5. **LST** fournit des solutions alternatives intéressantes
+6. **FCFS** sert de référence baseline
 
-### Pour Projets avec Ressources Limitées
-- **Recommandé :** MRD, EST, MSC
-- **Éviter :** SPT (peut créer des conflits)
+---
 
-### Pour Projets avec Échéances Serrées
-- **Recommandé :** MSLF, LFT, MCS
-- **Éviter :** MRD, MTS (moins orientés temps)
+## 🎯 Guide de Sélection d'Algorithme
+
+### Selon le Type de Projet
+- **Projets urgents** → MSLF ou LFT
+- **Ressources limitées** → EST ou LPT
+- **Nombreuses petites tâches** → SPT
+- **Optimisation fine** → LST
+- **Test baseline** → FCFS
+
+### Selon les Contraintes
+- **Échéances multiples** → LFT
+- **Goulots d'étranglement** → MSLF
+- **Utilisation maximale** → EST
+- **Équilibrage de charge** → LPT
 
 ---
 

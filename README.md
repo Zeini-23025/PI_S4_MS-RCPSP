@@ -18,6 +18,9 @@ Le MSRCPSP (Multi-Skilled Resource-Constrained Project Scheduling Problem) est u
 | **LFT** | Latest Finish Time | ⭐⭐⭐⭐⭐ |
 | **MSLF** | Minimum Slack Time | ⭐⭐⭐⭐⭐ |
 | **SPT** | Shortest Processing Time | ⭐⭐⭐⭐ |
+| **LPT** | Longest Processing Time | ⭐⭐⭐ |
+| **FCFS** | First Come First Served | ⭐⭐ |
+| **LST** | Latest Start Time | ⭐⭐⭐ |
 
 ## 🚀 Utilisation Rapide
 
@@ -56,10 +59,10 @@ Les résultats sont générés dans le dossier `resultats/` :
 
 ### Exemple de résultats
 ```csv
-Instance,EST,LFT,MSLF,SPT
-MSLIB_Set1_1,36,40,35,36
-MSLIB_Set1_10,20,20,20,20
-MSLIB_Set1_100,38,35,36,44
+Instance,EST,LFT,MSLF,SPT,LPT,FCFS,LST
+MSLIB_Set1_1,36,40,35,36,34,38,40
+MSLIB_Set1_10,20,20,20,20,20,20,26
+MSLIB_Set1_100,38,35,36,44,38,34,43
 ```
 
 ## 📁 Structure du Projet
@@ -104,14 +107,16 @@ python3 demo.py
 D'après les tests sur les instances MSLIB :
 
 ### Meilleures Performances
-- **Instance MSLIB_Set1_1** : 🥇 MSLF (35) > EST/SPT (36) > LFT (40)
-- **Instance MSLIB_Set1_100** : 🥇 LFT (35) > MSLF (36) > EST (38) > SPT (44)
-- **Instance MSLIB_Set1_10** : 🏆 Égalité parfaite (tous à 20)
+- **Instance MSLIB_Set1_1** : 🥇 LPT (34) > MSLF (35) > EST/SPT (36)
+- **Instance MSLIB_Set1_100** : 🥇 FCFS (34) > LFT (35) > MSLF (36)
+- **Instance MSLIB_Set1_10** : 🏆 Égalité (20 pour 6 algorithmes), LST plus lent (26)
 
 ### Recommandations Générales
-- **MSLF** et **LFT** sont généralement les plus performants
+- **LPT** peut surprendre avec d'excellents résultats sur certaines instances
+- **FCFS** parfois très efficace malgré sa simplicité
+- **MSLF** et **LFT** restent très performants en général
 - **EST** offre un bon équilibre rapidité/qualité
-- **SPT** peut être moins optimal mais très rapide
+- **LST** peut être moins optimal mais fournit des alternatives
 
 ## 🔬 Validation
 

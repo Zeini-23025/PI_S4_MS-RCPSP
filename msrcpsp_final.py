@@ -267,6 +267,15 @@ class MSRCPSPScheduler:
                 ready_activities.sort(key=lambda a: a.slack)
             elif priority_name == "SPT":
                 ready_activities.sort(key=lambda a: a.duration)
+            elif priority_name == "LPT":
+                # Longest Processing Time - plus long d'abord
+                ready_activities.sort(key=lambda a: -a.duration)
+            elif priority_name == "FCFS":
+                # First Come First Served - ordre d'ID (activité arrivée)
+                ready_activities.sort(key=lambda a: a.id)
+            elif priority_name == "LST":
+                # Latest Start Time - plus tard possible en premier
+                ready_activities.sort(key=lambda a: -a.latest_start)
             else:
                 # Par défaut, utiliser EST
                 ready_activities.sort(key=lambda a: a.earliest_start)
@@ -299,7 +308,7 @@ class MSRCPSPScheduler:
         return makespan, schedule
 
 
-def run_algorithms_on_instance(instance_path: str) -> Dict[str, Dict]:
+def run_algorithms_on_instance(instance_path: str, algorithms: List[str]) -> Dict[str, Dict]:
     """Exécute plusieurs algorithmes sur une instance"""
     instance_name = os.path.basename(instance_path).replace('.msrcp', '')
     
@@ -307,7 +316,7 @@ def run_algorithms_on_instance(instance_path: str) -> Dict[str, Dict]:
         instance = MSRCPSPParser.parse_file(instance_path)
         scheduler = MSRCPSPScheduler(instance)
         
-        algorithms = ["EST", "LFT", "MSLF", "SPT"]
+        algorithms = ["EST", "LFT", "MSLF", "SPT", "LPT", "FCFS", "LST"]
         results = {}
         
         for alg in algorithms:
@@ -338,6 +347,9 @@ def run_algorithms_on_instance(instance_path: str) -> Dict[str, Dict]:
 def main():
     """Fonction principale - traite toutes les instances du dossier"""
     print("🚀 MSRCPSP Solver - Traitement de toutes les instances")
+    
+    # Définir les algorithmes à utiliser
+    algorithms = ["EST", "LFT", "MSLF", "SPT", "LPT", "FCFS", "LST"]
     
     # Créer répertoires de sortie
     os.makedirs("resultats", exist_ok=True)
@@ -379,13 +391,13 @@ def main():
         instance_name = os.path.basename(instance_path).replace('.msrcp', '')
         print(f"\n📊 Traitement de {instance_name}...")
         
-        results = run_algorithms_on_instance(instance_path)
+        results = run_algorithms_on_instance(instance_path, algorithms)
         if results:
             all_results[instance_name] = results
             
             # Préparer les données de comparaison
             row = {'Instance': instance_name}
-            for alg in ["EST", "LFT", "MSLF", "SPT"]:
+            for alg in algorithms:
                 row[alg] = results.get(alg, {}).get('makespan', float('inf'))
             comparison_data.append(row)
     
@@ -394,7 +406,7 @@ def main():
         # Fichier de comparaison
         comparison_file = "resultats/test_comparison.csv"
         with open(comparison_file, 'w', newline='') as f:
-            fieldnames = ['Instance', 'EST', 'LFT', 'MSLF', 'SPT']
+            fieldnames = ['Instance'] + algorithms
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(comparison_data)
