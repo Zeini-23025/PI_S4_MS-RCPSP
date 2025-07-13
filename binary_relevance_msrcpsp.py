@@ -21,12 +21,13 @@ warnings.filterwarnings('ignore')
 
 # Import des modules locaux
 try:
-    from msrcpsp_final import (MSRCPSPParser, MSRCPSPSolver, 
+    from msrcpsp_final import (MSRCPSPParser, MSRCPSPScheduler, 
                                ProjectInstance, Activity, Resource)
-except ImportError:
-    print("Attention: Module msrcpsp_final non trouvé.")
+except ImportError as e:
+    print(f"Attention: Module msrcpsp_final non trouvé. Erreur: {e}")
     print("Certaines fonctionnalités seront limitées.")
     MSRCPSPParser = None
+    MSRCPSPScheduler = None
 
 
 class InstanceFeatureExtractor:
@@ -492,7 +493,7 @@ class BinaryRelevanceClassifier:
 class MSRCPSPDatasetBuilder:
     """Constructeur de dataset optimisé pour l'entraînement des modèles"""
     
-    def __init__(self, results_dir: str = "./resultats", instances_dir: str = "./instances"):
+    def __init__(self, results_dir: str = "./resultats", instances_dir: str = "./Instances"):
         self.results_dir = results_dir
         self.instances_dir = instances_dir
         self.feature_extractor = InstanceFeatureExtractor()
@@ -625,10 +626,10 @@ class MSRCPSPDatasetBuilder:
         # Statistiques pour l'analyse
         label_stats = {algo: {'positive': 0, 'total': 0} for algo in self.algorithms}
         
-        for i, row in filtered_df.iterrows():
+        for i, (_, row) in enumerate(filtered_df.iterrows()):
             makespans = []
             for algo in self.algorithms:
-                makespan = row[f'{algo}_makespan']
+                makespan = getattr(row, f'{algo}_makespan')
                 if not pd.isna(makespan):
                     makespans.append(makespan)
                 else:
@@ -730,7 +731,7 @@ class MSRCPSPDatasetBuilder:
         processed_count = 0
         for i, row in makespan_df_filtered.iterrows():
             instance_name = row['instance']
-            dzn_file = os.path.join(self.instances_dir, f"{instance_name}.dzn")
+            dzn_file = os.path.join(self.instances_dir, f"{instance_name}.msrcp")
             
             if os.path.exists(dzn_file):
                 try:
@@ -983,7 +984,7 @@ class MLIntegratedMSRCPSP:
     
     def solve_with_ml_guidance(self, instance_file: str, output_dir: str = "./resultats") -> Dict[str, Any]:
         """Résout une instance en utilisant les recommandations ML"""
-        if MSRCPSPSolver is None:
+        if MSRCPSPScheduler is None:
             print("Solveur MS-RCPSP non disponible")
             return {}
         
@@ -993,7 +994,7 @@ class MLIntegratedMSRCPSP:
             
             # Charger l'instance
             project_instance = MSRCPSPParser.parse_file(instance_file)
-            solver = MSRCPSPSolver(project_instance)
+            solver = MSRCPSPScheduler(project_instance)
             
             results = {}
             best_makespan = float('inf')
@@ -1006,7 +1007,7 @@ class MLIntegratedMSRCPSP:
             for algorithm in recommended_algos:
                 try:
                     print(f"Test de l'algorithme {algorithm}...")
-                    schedule, makespan = solver.solve(algorithm)
+                    makespan, schedule = solver.schedule_with_priority(algorithm)
                     
                     results[algorithm] = {
                         'makespan': makespan,

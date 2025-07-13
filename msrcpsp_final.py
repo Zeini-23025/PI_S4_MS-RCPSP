@@ -322,7 +322,7 @@ class MSRCPSPScheduler:
                 
                 # Essayer d'ordonnancer avec la relaxation courante
                 for activity in ready_activities:
-                    start_time = max(current_time, activity.earliest_start)
+                    start_time = max(float(current_time), float(activity.earliest_start))
                     
                     can_schedule, assigned_resources = self.find_available_resources_with_relaxation(
                         activity, start_time, resource_schedule, relaxation_level
@@ -374,7 +374,7 @@ class MSRCPSPScheduler:
 
 
 def run_algorithms_on_instance(instance_path: str, algorithms: List[str]) -> Dict[str, Dict]:
-    """Exécute plusieurs algorithmes sur une instance"""
+    """Exécute plusieurs algorithmes sur une instance et sauvegarde les résultats"""
     instance_name = os.path.basename(instance_path).replace('.msrcp', '')
     
     try:
@@ -402,6 +402,13 @@ def run_algorithms_on_instance(instance_path: str, algorithms: List[str]) -> Dic
                 }
                 print(f"  ✗ {alg}: Error - {str(e)}")
         
+        # Sauvegarder les résultats de l'instance dans un fichier JSON individuel
+        output_dir = "resultats/makespan_details"
+        os.makedirs(output_dir, exist_ok=True)
+        output_path = os.path.join(output_dir, f"{instance_name}_makespans.json")
+        with open(output_path, 'w') as f:
+            json.dump({'instance': instance_name, 'results': results}, f, indent=2)
+            
         return results
         
     except Exception as e:
