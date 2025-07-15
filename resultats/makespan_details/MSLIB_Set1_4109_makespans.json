@@ -1,0 +1,45 @@
+{
+  "instance": "MSLIB_Set1_4109",
+  "instance_info": {
+    "num_activities": 32,
+    "num_resources": 41,
+    "num_skills": 4
+  },
+  "results": {
+    "EST": {
+      "makespan": 143.0,
+      "duration": 0.0653829574584961,
+      "success": true
+    },
+    "LFT": {
+      "makespan": 144.0,
+      "duration": 0.0637209415435791,
+      "success": true
+    },
+    "MSLF": {
+      "makespan": 144.0,
+      "duration": 0.05650734901428223,
+      "success": true
+    },
+    "SPT": {
+      "makespan": 143.0,
+      "duration": 0.06017017364501953,
+      "success": true
+    },
+    "LPT": {
+      "makespan": 143.0,
+      "duration": 0.06055736541748047,
+      "success": true
+    },
+    "FCFS": {
+      "makespan": 144.0,
+      "duration": 0.061499834060668945,
+      "success": true
+    },
+    "LST": {
+      "makespan": 143.0,
+      "duration": 0.05647087097167969,
+      "success": true
+    }
+  }
+}

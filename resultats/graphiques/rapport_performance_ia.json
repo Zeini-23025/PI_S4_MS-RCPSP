@@ -1,0 +1,18 @@
+{
+  "taux_succes_ia": 100.0,
+  "instances_testees": 5,
+  "amelioration_moyenne": 3.6386601158383542,
+  "algorithmes_les_plus_recommandes": {
+    "EST": 5,
+    "LPT": 5,
+    "LST": 5,
+    "SPT": 5,
+    "LFT": 3,
+    "FCFS": 2
+  },
+  "algorithmes_les_plus_optimaux": {
+    "LST": 2,
+    "LPT": 2,
+    "EST": 1
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "total_instances": 20,
+  "successful_instances": 20,
+  "success_rate": 100.0,
+  "algorithms": [
+    "EST",
+    "LFT",
+    "MSLF",
+    "SPT",
+    "LPT",
+    "FCFS",
+    "LST"
+  ],
+  "timestamp": "2025-07-15 14:11:43"
+}

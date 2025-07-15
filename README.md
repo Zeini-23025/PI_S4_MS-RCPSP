@@ -1,13 +1,46 @@
-# MSRCPSP Solver avec Intelligence Artificielle
+# 🚀 MS-RCPSP avec Intelligence Artificielle
 
-Ce projet propose un solveur avancé pour le problème d'ordonnancement de projet à ressources multiples et compétences multiples (MSRCPSP). Il intègre plusieurs heuristiques, une gestion intelligente des ressources et un **système d'Intelligence Artificielle** pour optimiser automatiquement la sélection d'algorithmes.
+## 📋 Vue d'ensemble
 
-## 🚀 Démarrage rapide
+**MS-RCPSP (Multi-Skill Resource-Constrained Project Scheduling Problem)** est un système intelligent de planification de projets qui utilise l'intelligence artificielle pour recommander les meilleurs algorithmes d'ordonnancement.
 
-### Script automatisé (Recommandé)
+### 🎯 Objectif du projet
+Résoudre automatiquement des problèmes d'ordonnancement de projets en utilisant :
+- **7 algorithmes d'ordonnancement** différents
+- **Intelligence artificielle (ML)** pour recommander les meilleurs algorithmes
+- **Visualisations graphiques** pour analyser les performances
+- **Interface utilisateur simple** pour une utilisation facile
+
+## ⚡ Démarrage rapide
+
+### 🚀 Lancement automatique complet
 ```bash
-chmod +x project.sh
-./project.sh
+python3 run_project.py
+```
+Ce script lance automatiquement :
+- ✅ Génération des données d'entraînement
+- ✅ Entraînement du modèle IA
+- ✅ Tests sur plusieurs projets
+- ✅ Création des graphiques d'analyse
+- ✅ Rapport final complet
+
+**Durée : ~50 secondes pour un système complet**
+
+### 🎮 Utilisation interactive
+
+#### Pour l'assistant IA simple :
+```bash
+python3 assistant_ml.py
+```
+
+#### Pour une démonstration complète :
+```bash
+python3 demo_ml_integration.py
+```
+
+#### Pour l'analyse détaillée avec graphiques :
+```bash
+python3 detail_resultat_ml.py
 ```
 **En une seule commande :** génère les données, entraîne l'IA, et démontre la résolution optimisée !
 
