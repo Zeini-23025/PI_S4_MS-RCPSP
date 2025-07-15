@@ -497,7 +497,7 @@ class MSRCPSPDatasetBuilder:
         self.results_dir = results_dir
         self.instances_dir = instances_dir
         self.feature_extractor = InstanceFeatureExtractor()
-        self.algorithms = ['HRPW*', 'LST', 'LFT', 'MTS', 'TIMROS', 'HRU1', 'TIMRES', 'HRU2', 'STFD', 'EFT']
+        self.algorithms = ['EST', 'LFT', 'MSLF', 'SPT', 'LPT', 'FCFS', 'LST']
     
     def load_makespan_results(self) -> pd.DataFrame:
         """Charge les résultats de makespan depuis les fichiers JSON"""
